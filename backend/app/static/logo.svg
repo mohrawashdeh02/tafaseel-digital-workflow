@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 370" role="img" aria-labelledby="title">
+  <title id="title">Tafaseel Engineering</title>
+  <g fill="#383f86">
+    <path d="M3 2h250v68H3zM85 72h86v60H85zM85 136h86v20H85zM85 161h86v20H85zM85 186h86v20H85zM85 211h86v20H85zM85 236h86v31H85z"/>
+  </g>
+  <g fill="#72c5e9">
+    <path d="M183 83h153v42H183zM183 130h153v21H240v15h96v14H183zM183 164h56v15h-56zM183 184h153v16H183zM183 204h56v15h-56zM183 223h153v15H183zM183 242h153v24H183z"/>
+    <path d="M345 83h154v42H345zM345 130h154v21h-96v15h96v14H345zM345 164h57v15h-57zM345 184h154v16H345zM345 204h57v15h-57zM345 223h154v15H345zM345 242h154v24H345z"/>
+  </g>
+  <text x="12" y="355" fill="#081953" font-family="Trebuchet MS, sans-serif" font-size="47">Tafaseel Engineering</text>
+</svg>

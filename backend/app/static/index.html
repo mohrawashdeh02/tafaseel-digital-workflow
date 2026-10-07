@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>TAFASEEL Workflow</title>
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <main class="max-w-6xl mx-auto p-5">
+    <header class="flex items-center gap-5 py-5">
+      <div><h1 class="text-lg sm:text-2xl font-bold text-sky-900">TAFASEEL ENGINEERING</h1><p class="text-sm text-slate-500">نظام الإجراءات الرقمية</p></div>
+      <div dir="ltr" class="flex flex-1 items-center justify-between gap-4">
+        <img id="loginLogo" src="/static/logo.svg" alt="Tafaseel Engineering" class="w-20 sm:w-36 h-auto shrink-0">
+        <div dir="rtl" class="flex items-center gap-4"><span id="accountName" class="hidden font-semibold"></span><button id="logout" class="hidden text-sm text-red-600">تسجيل الخروج</button></div>
+      </div>
+    </header>
+    <section id="login" class="max-w-md mx-auto bg-white rounded-xl shadow p-6">
+      <h2 class="font-bold text-xl mb-4">تسجيل الدخول</h2>
+      <input id="email" class="w-full border rounded p-3 mb-3" type="email" placeholder="البريد الإلكتروني">
+      <input id="password" class="w-full border rounded p-3 mb-3" type="password" placeholder="كلمة المرور">
+      <button onclick="login()" class="w-full bg-sky-800 text-white rounded p-3">دخول</button>
+      <div class="border-t mt-5 pt-4 text-center">
+        <button id="signupToggle" type="button" class="text-sky-800 font-semibold" onclick="toggleSignup()">حساب جديد</button>
+        <form id="signupForm" class="hidden mt-4 text-right" onsubmit="signup(event)">
+          <input id="signupName" class="w-full border rounded p-3 mb-3" type="text" minlength="2" maxlength="150" autocomplete="name" required placeholder="الاسم الكامل">
+          <input id="signupEmail" class="w-full border rounded p-3 mb-3" type="email" autocomplete="email" required placeholder="البريد الإلكتروني">
+          <input id="signupPassword" class="w-full border rounded p-3 mb-3" type="password" minlength="8" maxlength="128" autocomplete="new-password" required placeholder="كلمة المرور، 8 أحرف على الأقل">
+          <label for="signupRole" class="block mb-1 text-sm font-medium">نوع الحساب</label>
+          <select id="signupRole" class="w-full border rounded p-3 mb-3" onchange="updateSignupDepartmentField()"><option value="EMPLOYEE">Employee</option><option value="DEPARTMENT_MANAGER">Department Manager</option></select>
+          <label id="signupDepartmentLabel" for="signupDepartment" class="block mb-1 text-sm font-medium">القسم (Department)</label>
+          <select id="signupDepartment" class="w-full border rounded p-3 mb-1" aria-describedby="signupDepartmentError" onchange="clearSignupDepartmentError()"><option value="">اختر القسم</option></select>
+          <p id="signupDepartmentError" class="hidden mb-3 text-sm text-red-600">يرجى اختيار القسم لإكمال إنشاء الحساب.</p>
+          <button class="w-full bg-emerald-700 text-white rounded p-3" type="submit">إنشاء الحساب</button>
+          <p id="signupPendingMessage" class="hidden mt-3 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900"></p>
+        </form>
+      </div>
+    </section>
+    <section id="app" class="hidden">
+      <div id="summary" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"></div>
+      <section class="bg-white rounded-lg shadow p-4 mb-5">
+        <h2 class="font-bold mb-2">الإشعارات</h2>
+        <ul id="notifications" class="space-y-2 text-sm"></ul>
+      </section>
+      <div class="flex gap-2 mb-4">
+        <button onclick="showNew()" id="newBtn" class="hidden bg-sky-800 text-white px-4 py-2 rounded">طلب جديد</button>
+        <button onclick="toggleArchive()" id="archiveBtn" class="hidden bg-indigo-700 text-white px-4 py-2 rounded">الطلبات القديمة</button>
+        <button onclick="loadRequests()" class="border px-4 py-2 rounded">تحديث الطلبات</button>
+      </div>
+      <section id="form" class="hidden bg-white rounded-xl shadow p-5 mb-5">
+        <h2 class="font-bold mb-4">إنشاء طلب</h2>
+        <select id="type" onchange="renderFields()" class="border rounded p-2 mb-4 w-full"></select>
+        <div id="fields" class="grid md:grid-cols-2 gap-3"></div>
+        <button onclick="submitRequest()" class="mt-4 bg-sky-800 text-white px-5 py-2 rounded">إرسال الطلب</button>
+      </section>
+      <section id="adminPanel" class="hidden bg-white rounded-xl shadow p-5 mb-5">
+        <div class="flex justify-between items-center mb-4"><h2 class="font-bold">إدارة المستخدمين</h2><button onclick="loadAdminUsers()" class="border px-3 py-1 rounded">تحديث</button></div>
+        <div class="grid md:grid-cols-3 gap-2 mb-4">
+          <input id="newName" class="border rounded p-2" placeholder="اسم المستخدم">
+          <input id="newEmployeeId" class="border rounded p-2" placeholder="الرقم الوظيفي">
+          <input id="newEmail" class="border rounded p-2" type="email" placeholder="البريد الإلكتروني">
+          <input id="newPassword" class="border rounded p-2" type="password" placeholder="كلمة مرور 12 حرفًا على الأقل">
+          <select id="newRole" class="border rounded p-2" onchange="updateAdminDepartmentField()"><option value="EMPLOYEE">Employee</option><option value="DEPARTMENT_MANAGER">Department Manager</option><option value="EXECUTIVE_MANAGER">Executive Manager</option><option value="HR">HR</option><option value="ADMIN">Admin</option></select>
+          <div id="newDepartmentField" class="hidden md:col-span-3"><label id="newDepartmentLabel" for="newDepartment" class="block mb-1 text-sm font-medium">القسم (Department)</label><select id="newDepartment" class="w-full border rounded p-2"><option value="">اختر القسم</option></select></div>
+          <button onclick="createUser()" class="bg-emerald-700 text-white rounded p-2">إنشاء مستخدم</button>
+        </div>
+        <div class="overflow-auto"><table class="w-full text-sm"><thead class="bg-slate-100"><tr><th class="p-2 text-right">الاسم</th><th class="p-2 text-right">البريد</th><th class="p-2 text-right">القسم</th><th class="p-2 text-right">الدور</th><th class="p-2 text-right">الحالة</th><th class="p-2 text-right">الإجراء</th></tr></thead><tbody id="adminUsers"></tbody></table></div>
+      </section>
+      <section id="technicianInbox" class="hidden bg-white rounded-xl shadow overflow-hidden mb-5">
+        <div class="p-4 border-b"><h2 id="technicianInboxTitle" class="font-bold">طلبات فني المصنع الواردة إلى Drawing</h2><p class="mt-1 text-sm text-slate-500">راجع الطلب ووافق عليه أو ارفضه؛ ثم ينتقل الطلب إلى مرحلة الموافقة التالية.</p></div>
+        <div class="overflow-auto"><table class="w-full text-sm"><thead class="bg-slate-100"><tr><th class="p-3 text-right">رقم</th><th class="p-3 text-right">النوع</th><th class="p-3 text-right">مقدم الطلب</th><th class="p-3 text-right">الحالة</th><th class="p-3"></th></tr></thead><tbody id="technicianRequests"></tbody></table></div>
+      </section>
+      <section class="bg-white rounded-xl shadow overflow-hidden">
+        <table class="w-full text-sm"><thead class="bg-slate-100"><tr><th class="p-3 text-right">رقم</th><th class="p-3 text-right">النوع</th><th class="p-3 text-right">مقدم الطلب</th><th class="p-3 text-right">الحالة</th><th class="p-3"></th></tr></thead><tbody id="requests"></tbody></table>
+      </section>
+      <section id="archiveSection" class="hidden bg-white rounded-xl shadow overflow-hidden mt-5">
+        <div class="p-4 border-b"><h2 class="font-bold">الطلبات القديمة</h2><p class="mt-1 text-sm text-slate-500">الطلبات الموافق عليها المقدمة من الموظفين ومسؤولي الأقسام، مرتبة من الأحدث إلى الأقدم حسب تاريخ التقديم.</p></div>
+        <div class="overflow-auto"><table class="w-full text-sm"><thead class="bg-slate-100"><tr><th class="p-3 text-right">تاريخ التقديم</th><th class="p-3 text-right">رقم</th><th class="p-3 text-right">النوع</th><th class="p-3 text-right">مقدم الطلب</th><th class="p-3 text-right">الحالة</th><th class="p-3"></th></tr></thead><tbody id="archiveRequests"></tbody></table></div>
+      </section>
+    </section>
+  </main>
+  <dialog id="requestDialog" class="w-[min(720px,calc(100%-2rem))] max-h-[90vh] rounded-lg p-0 shadow-2xl backdrop:bg-slate-900/50">
+    <section class="p-5 md:p-6" dir="rtl">
+      <header class="flex justify-between items-start gap-4 border-b pb-4">
+        <div><h2 id="detailTitle" class="text-xl font-bold"></h2><p id="detailStatus" class="mt-1 text-sm text-slate-600"></p><p id="detailRequester" class="mt-1 text-sm text-slate-500"></p></div>
+        <button type="button" class="text-2xl leading-none text-slate-500" aria-label="إغلاق" onclick="closeDetails()">&times;</button>
+      </header>
+      <div class="py-4">
+        <h3 class="font-semibold mb-2">تفاصيل الطلب</h3>
+        <dl id="detailFields" class="grid sm:grid-cols-2 gap-3"></dl>
+      </div>
+      <section class="border-t py-4">
+        <h3 class="font-semibold mb-3">متابعة الطلب والقرارات</h3>
+        <ol id="detailHistory" class="space-y-3"></ol>
+      </section>
+      <section id="decisionPanel" class="hidden border-t pt-4">
+        <label for="decisionComment" class="block font-semibold mb-2">ملاحظات (اختيارية للموافقة، ومطلوبة للرفض)</label>
+        <textarea id="decisionComment" rows="3" maxlength="2000" class="w-full border rounded p-3" placeholder="اكتب ملاحظتك على الطلب"></textarea>
+        <div class="flex gap-2 mt-3">
+          <button type="button" onclick="submitDecision('APPROVE')" class="bg-emerald-700 text-white px-5 py-2 rounded">موافقة الطلب</button>
+          <button type="button" onclick="submitDecision('REJECT')" class="bg-red-700 text-white px-5 py-2 rounded">رفض الطلب</button>
+        </div>
+      </section>
+    </section>
+  </dialog>
+  <script src="/static/app.js?v=20261006-1405"></script>
+</body>
+</html>
